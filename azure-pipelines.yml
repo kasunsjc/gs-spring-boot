@@ -47,6 +47,9 @@ stages:
     - job: Deploy_Web_Apps
       displayName: Deploy to Web Apps
       steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: current
       - task: AzureRmWebAppDeployment@4
         inputs:
           ConnectionType: 'AzureRM'
