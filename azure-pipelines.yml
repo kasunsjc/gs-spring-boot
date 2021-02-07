@@ -50,6 +50,7 @@ stages:
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: current
+          artifactName: drop
       - task: AzureRmWebAppDeployment@4
         inputs:
           ConnectionType: 'AzureRM'
