@@ -6,27 +6,51 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+variables:
+  vmImageName: 'ubuntu-latest'
+  azureSubscriptionEndpoint: 'MSDN-Subscription'
+  WebAppName: 'devops-java-app'
 
-steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'initial/pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '1.8'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'package'
+stages:
+  - stage: Build
+    displayName: Build and publish stage
+    jobs:
+      - job: Build
+        pool: 
+          vmImage: $(vmImageName)
+          steps:
+            - task: Maven@3
+              inputs:
+                mavenPomFile: 'initial/pom.xml'
+                mavenOptions: '-Xmx3072m'
+                javaHomeOption: 'JDKVersion'
+                jdkVersionOption: '1.8'
+                jdkArchitectureOption: 'x64'
+                publishJUnitResults: true
+                testResultsFiles: '**/surefire-reports/TEST-*.xml'
+                goals: 'package'
+            
+            - task: CopyFiles@2
+              inputs:
+                SourceFolder: $(build.sourcesdirectory)
+                TargetFolder: $(build.artifactstagingdirectory)
+                Contents: "**/*.jar"
+            
+            - task: PublishBuildArtifacts@1
+              inputs:
+                ArtifactName: drop
+  - stage: Deploy_App_Service
+    displayName: Deploy to Azure App Service
+    dependsOn: Build
+    jobs:
+      - job: Deploy_Web_Apps
+        displayName: Deploy to Web Apps
+        steps:
+          - task: AzureWebApp@1
+            displayName: 'Azure Web App Deploy'
+            inputs:
+              azureSubscription: $(azureSubscriptionEndpoint)
+              appType: webAppLinux
+              appName: $(WebAppName)
+              package: $(System.ArtifactsDirectory)/**/*.zip
 
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: $(build.sourcesdirectory)
-    TargetFolder: $(build.artifactstagingdirectory)
-    Contents: "**/*.jar"
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    ArtifactName: drop
