@@ -47,11 +47,12 @@ stages:
     - job: Deploy_Web_Apps
       displayName: Deploy to Web Apps
       steps:
-        - task: AzureWebApp@1
-          displayName: 'Azure Web App Deploy'
-          inputs:
-            azureSubscription: $(azureSubscriptionEndpoint)
-            appType: webAppLinux
-            appName: $(WebAppName)
-            package: $(System.ArtifactsDirectory)/**/*.zip
+      - task: AzureRmWebAppDeployment@4
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'MSDN-Subscription'
+          appType: 'webAppLinux'
+          WebAppName: 'devops-java-app'
+          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+          RuntimeStack: 'JAVA|8-jre8'
 
