@@ -56,7 +56,7 @@ stages:
           ConnectionType: 'AzureRM'
           azureSubscription: 'MSDN-Subscription'
           appType: 'webAppLinux'
-          packageForLinux: $(System.DefaultWorkingDirectory)/_Java-Spring-Boot-Demo-Maven-CI/drop/initial/target/*.jar
+          packageForLinux: $(System.DefaultWorkingDirectory)/drop/initial/target/*.jar
           WebAppName: 'devops-java-app'
           RuntimeStack: 'JAVA|8-jre8'
 
