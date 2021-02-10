@@ -27,7 +27,7 @@ stages:
             jdkVersionOption: '1.8'
             jdkArchitectureOption: 'x64'
             publishJUnitResults: true
-            testResultsFiles: '**/surefire-reports/TEST-*.xml'
+            testResultsFiles: 'test/run.sh'
             goals: 'package'
         
         - task: CopyFiles@2
@@ -56,6 +56,7 @@ stages:
           ConnectionType: 'AzureRM'
           azureSubscription: 'MSDN-Subscription'
           appType: 'webAppLinux'
+          packageForLinux: $(System.DefaultWorkingDirectory)/_Java-Spring-Boot-Demo-Maven-CI/drop/initial/target/*.jar
           WebAppName: 'devops-java-app'
           RuntimeStack: 'JAVA|8-jre8'
 
